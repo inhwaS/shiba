@@ -88,7 +88,13 @@ input[type=file] {
   cursor: pointer;
   border-radius: 5px;
 }
+#buttons {
+  text-align: center;
+}
 
+#buttons input {
+  margin: 10px;
+}
 /* Style for the "Choose File" button */
 input[type="file"] {
   display: none;

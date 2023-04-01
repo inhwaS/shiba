@@ -4,6 +4,10 @@ $(function() {
   var $button = $('#send-button');
   var $messages = $('.messages');
   var $GenerateVideo = $('#generate-button');
+  var $hiddenDiv = $('.hidden');
+
+  var $upload = $('choose-input1');
+  var $record  = $('choose-input2');;
   // Get references to the file input element and form
   var $fileInput = $('#file-input');
   var $form = $('#file-form');
@@ -12,17 +16,19 @@ $(function() {
   const $selects = $('select');
   var $selectedWords = $("#selected-words");
 
-  addMessage('Shiba', 'Welcome to VRIV. How may I assist you today?', 'received');
+    // start of loading functions
+  $hiddenDiv.hide();
+  $('#buttons').hide();
+  addMessage('Shiba', 'Welcome to VRIV. How may I assist you today?', 'received', showButtons);
   $fileName.hide();
+
 
   // Show file name and upload button when a file is selected
   $('#file-input').on('change', function() {
     var fileName = $(this).val().split('\\').pop();
     $fileName.show();
     $fileName.val(fileName);
-    
-  });
-
+  })
 
   // Add a click event listener to the button
   $button.on('click', function() {
@@ -36,7 +42,6 @@ $(function() {
 	});
   });
 
-
 	$GenerateVideo.on('click', function() {
 		event.preventDefault();
 		console.log("hihihi")
@@ -48,6 +53,17 @@ $(function() {
 			addMessage('Shiba', 'Generate Video on ' + $selectedWords.val(), 'received');
 		});
 	});
+
+    $upload.on('click', function(){
+        console.log("upload clicked");
+    })
+
+
+  function showButtons(){
+    setTimeout(function () {
+            $('#buttons').show();
+    }, 2000);
+  }
 
   // Function for adding a message to the chat window
   function addMessage(sender, content, type, callback) {

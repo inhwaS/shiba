@@ -13,20 +13,31 @@
     <div class="message">
     </div>
     <div id="messages"></div>
-    <form id="file-form">
-        <label for="file-input" class="choose-file-btn">Choose File</label>
-        <input type="file" id="file-input" name="file">
-        <input type="text" id="file-name" disabled></input>
-        <button type="submit" id="send-button">Upload</button>
-        <button class="choose-file-btn" id="start-button">Start Transcription</button>
-        <button class="choose-file-btn" id="stop-button" disabled>Stop Transcription</button>
-        <div id="transcription"></div>
-        <textarea id="input" rows="10" cols="50"></textarea>
-        <button id="analyze-button">Analyze</button>
-        <div id="output"></div>
-        <button type="submit" id="generate-button">Generate Video</button>
+    <div id="buttons">
+            <label class="choose-file-btn" id="choose-input1">Choose File to Upload</label>
+            <label class="choose-file-btn" id="choose-input2">Start Recording</label>
+    </div>
+        <form id="file-form">
+            <div class="hidden">
+                <!--        FILE UPLOAD SECTION     -->
+                <label for="file-input" class="choose-file-btn">Choose File</label>
+                <input type="file" id="file-input" name="file">
+                <input type="text" id="file-name" disabled></input>
+                <button type="submit" id="send-button">Upload</button>
 
-        <input type="hidden" id="selected-words" value="">
+                <!--        VOICE RECORDING SECTION     -->
+                <button class="choose-file-btn" id="start-button">Start Transcription</button>
+                <button class="choose-file-btn" id="stop-button" disabled>Stop Transcription</button>
+                <div id="transcription"></div>
+                <textarea id="input" rows="10" cols="50"></textarea>
+                <button id="analyze-button">Analyze</button>
+                <div id="output"></div>
+                <button type="submit" id="generate-button">Generate Video</button>
+
+                <!--        HIDDEN SECTION     -->
+                <input type="hidden" id="selected-words" value="">
+            </div>
+        </form>
         <script>
             let selectedWords = "";
             const recognition = new window.webkitSpeechRecognition();
@@ -128,7 +139,6 @@
                 background-color: yellow;
             }
         </style>
-    </form>
 </div>
 </body>
 </html>
