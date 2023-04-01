@@ -10,7 +10,7 @@ $(function() {
   var $messages = $('#messages');
   var $fileName = $("#file-name");
   const $selects = $('select');
-  const selectedWords = $("#selected-words").val();
+  var selectedWords = $("#selected-words").val();
   addMessage('Shiba', 'Welcome to VRIV. How may I assist you today?', 'received');
   $fileName.hide();
 
@@ -39,7 +39,7 @@ $(function() {
 		event.preventDefault();
 		console.log("hihihi")
 		// Get the user's message from the input element
-		console.log(selectedWords);
+		console.log("my result pass in is " + selectedWords);
 		// Add the user's message to the chat window
 		addMessage('You', selectedWords.val, 'sent', function(){
 			$form.hide();
