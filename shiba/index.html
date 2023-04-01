@@ -63,7 +63,8 @@
                 stopButton.disabled = true;
             });
 
-            function analyze() {
+            function analyze(event) {
+                event.preventDefault();
                 const rawText = input.value.toLowerCase();
                 const cleanText = rawText.replace(/[^a-z\s]/g, '');
                 const words = cleanText.match(/\b\S+\b/g);
