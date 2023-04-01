@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>ChatGPT</title>
+	<title>VRIV::Voice Recording Into Video</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="style.css">
@@ -10,13 +10,15 @@
 </head>
 <body>
 	<div class="container">
-		<div class="messages"></div>
-		<div class="form">
-			<input type="text" id="message-input" placeholder="Type your message...">
-			<input type="submit" id="send-button" value="Send">
-			<input type="file" id="file-input">
-			<button id="upload-button">Upload</button>
+		<div class="message">
 		</div>
+		<div id="messages"></div>
+	  <form id="file-form">
+	    <label for="file-input" class="choose-file-btn">Choose File</label>
+	    <input type="file" id="file-input" name="file">
+	    <input type="text" id="file-name" disabled></input>
+	    <button type="submit" id="send-button">Upload</button>
+	  </form>
 	</div>
 </body>
 </html>
