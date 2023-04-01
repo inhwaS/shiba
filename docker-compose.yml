@@ -1,0 +1,11 @@
+version: '3'
+services:
+    nginx:
+         container_name: nginx
+         image: nginx:latest
+         ports:
+           - 80:80
+         volumes:
+           - ./shiba:/usr/share/nginx/html
+           - ./nginx/conf.d/:/etc/nginx/conf.d/
+           - ./nginx/sites-enabled/default.conf:/etc/nginx/sites-enabled/default.conf
