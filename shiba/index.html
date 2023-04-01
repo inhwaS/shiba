@@ -28,7 +28,7 @@
 
         <input type="hidden" id="selected-words" value="">
         <script>
-
+            let selectedWords = "";
             const recognition = new window.webkitSpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
@@ -116,7 +116,7 @@
                 const result = passToJquery.replace(/:\s*\d+/g, '');
                 console.log(result); // "www ww"
                 document.getElementById("selected-words").value = result;
-
+                selectedWords = result;
             }
 
 

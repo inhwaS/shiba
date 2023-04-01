@@ -10,7 +10,8 @@ $(function() {
   var $messages = $('#messages');
   var $fileName = $("#file-name");
   const $selects = $('select');
-  var selectedWords = $("#selected-words").val();
+  var $selectedWords = $("#selected-words");
+
   addMessage('Shiba', 'Welcome to VRIV. How may I assist you today?', 'received');
   $fileName.hide();
 
@@ -21,6 +22,7 @@ $(function() {
     $fileName.val(fileName);
     
   });
+
 
   // Add a click event listener to the button
   $button.on('click', function() {
@@ -39,11 +41,11 @@ $(function() {
 		event.preventDefault();
 		console.log("hihihi")
 		// Get the user's message from the input element
-		console.log("my result pass in is " + selectedWords);
+		console.log("my result pass in is " + $selectedWords.val());
 		// Add the user's message to the chat window
-		addMessage('You', selectedWords.val, 'sent', function(){
+		addMessage('You', $selectedWords.val(), 'sent', function(){
 			$form.hide();
-			addMessage('Shiba', 'Generate Video on' + selectedWords.val, 'received');
+			addMessage('Shiba', 'Generate Video on ' + $selectedWords.val(), 'received');
 		});
 	});
 
