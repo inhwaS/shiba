@@ -3,13 +3,14 @@ $(function() {
   // Get references to the input and button elements
   var $button = $('#send-button');
   var $messages = $('.messages');
-
+  var $GenerateVideo = $('#generate-button');
   // Get references to the file input element and form
   var $fileInput = $('#file-input');
   var $form = $('#file-form');
   var $messages = $('#messages');
   var $fileName = $("#file-name");
-
+  const $selects = $('select');
+  const selectedWords = $("#selected-words").val();
   addMessage('Shiba', 'Welcome to VRIV. How may I assist you today?', 'received');
   $fileName.hide();
 
@@ -32,6 +33,19 @@ $(function() {
 		addMessage('Shiba', 'Successfully uploaded! please wait to be parsed', 'received');
 	});
   });
+
+
+	$GenerateVideo.on('click', function() {
+		event.preventDefault();
+		console.log("hihihi")
+		// Get the user's message from the input element
+		console.log(selectedWords);
+		// Add the user's message to the chat window
+		addMessage('You', selectedWords.val, 'sent', function(){
+			$form.hide();
+			addMessage('Shiba', 'Generate Video on' + selectedWords.val, 'received');
+		});
+	});
 
   // Function for adding a message to the chat window
   function addMessage(sender, content, type, callback) {
@@ -60,9 +74,9 @@ $(function() {
 	$messages.append($message);
 	$messages.scrollTop($messages[0].scrollHeight);
 
-	// if (callback) {
-	// 	callback();
-	// }
+	if (callback) {
+		callback();
+	}
    }
 
 

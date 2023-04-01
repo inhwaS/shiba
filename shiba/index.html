@@ -25,6 +25,8 @@
         <button id="analyze-button">Analyze</button>
         <div id="output"></div>
         <button type="submit" id="generate-button">Generate Video</button>
+
+        <input type="hidden" id="selected-words" value="">
         <script>
 
             const recognition = new window.webkitSpeechRecognition();
@@ -38,6 +40,8 @@
             const input = document.getElementById("input");
             const output = document.getElementById("output");
             const generateButton = document.getElementById("generate-button");
+            const selectedDivs = []; // create an empty array to hold selected divs
+
 
             startButton.addEventListener("click", () => {
                 recognition.start();
@@ -64,7 +68,6 @@
             });
 
             function analyze(event) {
-                //
                 event.preventDefault();
                 const rawText = input.value.toLowerCase();
                 const cleanText = rawText.replace(/[^a-z\s]/g, '');
@@ -77,6 +80,7 @@
                 const sortedWords = Array.from(frequencyMap.entries())
                     .sort((a, b) => b[1] - a[1]);
                 output.innerHTML = "";
+
                 sortedWords.forEach(pair => {
                     const word = pair[0];
                     const count = pair[1];
@@ -85,45 +89,36 @@
                     div.addEventListener("click", () => {
                         if (div.classList.contains("selected")) {
                             div.classList.remove("selected");
+                            // remove the div from the selected divs array
+                            const index = selectedDivs.indexOf(div);
+                            if (index > -1) {
+                                selectedDivs.splice(index, 1);
+                            }
                         } else {
                             div.classList.add("selected");
+                            // add the div to the selected divs array
+                            selectedDivs.push(div);
                         }
                     });
                     output.appendChild(div);
                 });
+
             }
 
             analyzeButton.addEventListener("click", analyze);
 
             function generateVideo(selectedWords) {
-                const API_KEY = "091343ce13c8ae780065ecb3b13dc903475dd22cb78a05503c2e0c69c5e98044";
-                const IMAGES_PER_WORD = 3;
-                const images = [];
-
-                for (const word of selectedWords) {
-                    const url = `https://api.unsplash.com/search/photos?query=${word}&per_page=${IMAGES_PER_WORD}&client_id=${API_KEY}`;
-                    fetch(url)
-                        .then(response => response.json())
-                        .then(data => {
-                            const results = data.results.map(result => result.urls.regular);
-                            images.push(...results);
-                            if (images.length === selectedWords.length * IMAGES_PER_WORD) {
-                                const slideshow = new Flickity("#slideshow", {
-                                    cellAlign: "left",
-                                    contain: true
-                                });
-                                for (const image of images) {
-                                    const slide = document.createElement("img");
-                                    slide.src = image;
-                                    slideshow.append(slide);
-                                }
-                            }
-                        })
-                        .catch(error => {
-                            console.error(error);
-                        });
+                let passToJquery = "";
+                for (let i = 0; i < selectedDivs.length; i++) {
+                    passToJquery += selectedDivs[i].textContent;
+                    passToJquery += " ";
                 }
+                const result = passToJquery.replace(/:\s*\d+/g, '');
+                console.log(result); // "www ww"
+                //document.getElementById("selected-words").value = result;
+                $("#selected-words").val(result);
             }
+
 
             generateButton.addEventListener("click", generateVideo);
 
