@@ -1,71 +1,71 @@
 $(function() {
-	// Get references to the input and button elements
-	var $input = $('#message-input');
-	var $button = $('#send-button');
-	var $messages = $('.messages');
-	var $fileInput = $('#file-input');
-	var $uploadButton = $('#upload-button');
 	
-	// Add a click event listener to the button
-	$button.on('click', function() {
-		// Get the user's message from the input element
-		var message = $input.val().trim();
+  // Get references to the input and button elements
+  var $button = $('#send-button');
+  var $messages = $('.messages');
 
-		// Clear the input field
-		$input.val('');
+  // Get references to the file input element and form
+  var $fileInput = $('#file-input');
+  var $form = $('#file-form');
+  var $messages = $('#messages');
+  var $fileName = $("#file-name");
 
-		// Add the user's message to the chat window
-		addMessage('You', message, 'sent');
+  addMessage('Shiba', 'Welcome to VRIV. How may I assist you today?', 'received');
+  $fileName.hide();
 
-		// Send the user's message to ChatGPT and wait for a response
-		$.get('/api/chat', { message: message }, function(response) {
-			// Add ChatGPT's response to the chat window
-			addMessage('ChatGPT', response, 'received');
-		});
+  // Show file name and upload button when a file is selected
+  $('#file-input').on('change', function() {
+    var fileName = $(this).val().split('\\').pop();
+    $fileName.show();
+    $fileName.val(fileName);
+    
+  });
+
+  // Add a click event listener to the button
+  $button.on('click', function() {
+  	event.preventDefault();
+    // Get the user's message from the input element
+    var file = $fileInput[0].files[0];
+    // Add the user's message to the chat window
+	addMessage('You', file.name, 'sent', function(){
+		$form.hide();
+		addMessage('Shiba', 'Successfully uploaded! please wait to be parsed', 'received');
 	});
+  });
 
-	// Add a click event listener to the upload button
-	$uploadButton.on('click', function() {
-		// Get the file object from the file input element
-		var file = $fileInput[0].files[0];
+  // Function for adding a message to the chat window
+  function addMessage(sender, content, type, callback) {
+	// Create a new message element
+	console.log(content);
+	var $message = $('<div>').addClass('message');
+	var $sender = $('<div>').addClass('sender').text(sender + ':');
+	var $content = $('<div>').addClass('content').addClass(type);
 
-		// Create a new FormData object and add the file to it
-		var formData = new FormData();
-		formData.append('file', file);
-
-		// Send the file to the server using a POST request
-		$.ajax({
-			url: '/api/upload',
-			type: 'POST',
-			data: formData,
-			processData: false,
-			contentType: false,
-			success: function(response) {
-				// Add the server's response to the chat window
-				addMessage('You', 'uploaded file: ' + file.name, 'sent');
-				addMessage('Server', response, 'received');
-			},
-			error: function() {
-				// Display an error message if the file upload fails
-				addMessage('Server', 'File upload failed.', 'received');
+	if ( sender == 'Shiba') {
+		// Add the message content one character at a time
+		var index = 0;
+		var messageInterval = setInterval(function() {
+			if (index >= content.length) {
+			  clearInterval(messageInterval);
+			} else {
+			  $content.text($content.text() + content.charAt(index));
+			  index++;
 			}
-		});
-	});
-
-	// Function for adding a message to the chat window
-	function addMessage(sender, content, type) {
-		// Create a new message element
-		var $message = $('<div>').addClass('message');
-		var $sender = $('<div>').addClass('sender').text(sender + ':');
-		var $content = $('<div>').addClass('content').addClass(type).text(content);
-
-		// Add the sender and content to the message element
-		$message.append($sender).append($content);
-
-		// Add the message element to the chat window
-		$messages.append($message);
-
-		// Scroll to the bottom of the chat window
-		$messages.scrollTop($messages[0].scrollHeight);
+		}, 50);
+	}else{
+		$content.text(content);
 	}
+
+	$message.append($sender).append($content);
+	$messages.append($message);
+	$messages.scrollTop($messages[0].scrollHeight);
+
+	if (callback) {
+		callback();
+	}
+   }
+
+
 });
+
+
