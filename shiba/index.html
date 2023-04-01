@@ -1,24 +1,137 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>VRIV::Voice Recording Into Video</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="style.css">
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script src="script.js"></script>
+    <title>VRIV::Voice Recording Into Video</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
 </head>
 <body>
-	<div class="container">
-		<div class="message">
-		</div>
-		<div id="messages"></div>
-	  <form id="file-form">
-	    <label for="file-input" class="choose-file-btn">Choose File</label>
-	    <input type="file" id="file-input" name="file">
-	    <input type="text" id="file-name" disabled></input>
-	    <button type="submit" id="send-button">Upload</button>
-	  </form>
-	</div>
+<div class="container">
+    <div class="message">
+    </div>
+    <div id="messages"></div>
+    <form id="file-form">
+        <label for="file-input" class="choose-file-btn">Choose File</label>
+        <input type="file" id="file-input" name="file">
+        <input type="text" id="file-name" disabled></input>
+        <button type="submit" id="send-button">Upload</button>
+        <button class="choose-file-btn" id="start-button">Start Transcription</button>
+        <button class="choose-file-btn" id="stop-button" disabled>Stop Transcription</button>
+        <div id="transcription"></div>
+        <textarea id="input" rows="10" cols="50"></textarea>
+        <button id="analyze-button">Analyze</button>
+        <div id="output"></div>
+        <button type="submit" id="generate-button">Generate Video</button>
+        <script>
+
+            const recognition = new window.webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            const startButton = document.getElementById("start-button");
+            const stopButton = document.getElementById("stop-button");
+            const transcription = document.getElementById("transcription");
+            const analyzeButton = document.getElementById("analyze-button");
+            const input = document.getElementById("input");
+            const output = document.getElementById("output");
+            const generateButton = document.getElementById("generate-button");
+
+            startButton.addEventListener("click", () => {
+                recognition.start();
+                startButton.disabled = true;
+                stopButton.disabled = false;
+            });
+
+            stopButton.addEventListener("click", () => {
+                recognition.stop();
+                startButton.disabled = false;
+                stopButton.disabled = true;
+            });
+
+            recognition.addEventListener("result", event => {
+                const transcript = Array.from(event.results)
+                    .map(result => result[0].transcript)
+                    .join("");
+                document.getElementById("input").textContent = transcript;
+            });
+
+            recognition.addEventListener("end", () => {
+                startButton.disabled = false;
+                stopButton.disabled = true;
+            });
+
+            function analyze() {
+                const rawText = input.value.toLowerCase();
+                const cleanText = rawText.replace(/[^a-z\s]/g, '');
+                const words = cleanText.match(/\b\S+\b/g);
+                const frequencyMap = new Map();
+                words.forEach(word => {
+                    const count = frequencyMap.get(word) || 0;
+                    frequencyMap.set(word, count + 1);
+                });
+                const sortedWords = Array.from(frequencyMap.entries())
+                    .sort((a, b) => b[1] - a[1]);
+                output.innerHTML = "";
+                sortedWords.forEach(pair => {
+                    const word = pair[0];
+                    const count = pair[1];
+                    const div = document.createElement("div");
+                    div.textContent = `${word}: ${count}`;
+                    div.addEventListener("click", () => {
+                        if (div.classList.contains("selected")) {
+                            div.classList.remove("selected");
+                        } else {
+                            div.classList.add("selected");
+                        }
+                    });
+                    output.appendChild(div);
+                });
+            }
+
+            analyzeButton.addEventListener("click", analyze);
+
+            function generateVideo(selectedWords) {
+                const API_KEY = "091343ce13c8ae780065ecb3b13dc903475dd22cb78a05503c2e0c69c5e98044";
+                const IMAGES_PER_WORD = 3;
+                const images = [];
+
+                for (const word of selectedWords) {
+                    const url = `https://api.unsplash.com/search/photos?query=${word}&per_page=${IMAGES_PER_WORD}&client_id=${API_KEY}`;
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            const results = data.results.map(result => result.urls.regular);
+                            images.push(...results);
+                            if (images.length === selectedWords.length * IMAGES_PER_WORD) {
+                                const slideshow = new Flickity("#slideshow", {
+                                    cellAlign: "left",
+                                    contain: true
+                                });
+                                for (const image of images) {
+                                    const slide = document.createElement("img");
+                                    slide.src = image;
+                                    slideshow.append(slide);
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
+            }
+
+            generateButton.addEventListener("click", generateVideo);
+
+        </script>
+        <style>
+            .selected {
+                background-color: yellow;
+            }
+        </style>
+    </form>
+</div>
 </body>
 </html>

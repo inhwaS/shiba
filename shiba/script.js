@@ -60,9 +60,9 @@ $(function() {
 	$messages.append($message);
 	$messages.scrollTop($messages[0].scrollHeight);
 
-	if (callback) {
-		callback();
-	}
+	// if (callback) {
+	// 	callback();
+	// }
    }
 
 
