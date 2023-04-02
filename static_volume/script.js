@@ -45,6 +45,7 @@ $(function() {
 		    },
 		    success: function(response) {
 		        // handle success response
+		        successCallback(response);
 		    },
 		    error: function(error) {
 		        // handle error response
@@ -52,7 +53,13 @@ $(function() {
 		});
   });
 
-  
+  function successCallback(response){
+        console.log("successfully called function!");
+//        console.log(response);
+        var parsedResponse = $.parseJSON(response);
+        console.log(parsedResponse.content);
+        addMessage('Shiba', parsedResponse.content, 'received');
+  }
 
   // Function for adding a message to the chat window
   function addMessage(sender, content, type, callback) {

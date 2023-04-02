@@ -18,6 +18,8 @@ COPY djangoapp/starterkit /var/djangoapp/starterkit
 # run Django management commands at start
 RUN cd starterkit && python manage.py collectstatic --no-input
 
+RUN apt-get update && apt-get install -y flac
+
 # expose the port 8000
 EXPOSE 8000
 
