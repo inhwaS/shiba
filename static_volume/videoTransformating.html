@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Audio Word Frequency Analyzer</title>
+</head>
+<body>
+<h1>Audio Word Frequency Analyzer</h1>
+<button id="start-button">Start Transcription</button>
+<button id="stop-button" disabled>Stop Transcription</button>
+<div id="transcription"></div>
+<h2>Word Frequency Analysis</h2>
+<textarea id="input" rows="10" cols="50"></textarea>
+<button id="analyze-button">Analyze</button>
+<div id="output"></div>
+<button id="generate-button">Generate Video</button>
+<script>
+  const recognition = new window.webkitSpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  const startButton = document.getElementById("start-button");
+  const stopButton = document.getElementById("stop-button");
+  const transcription = document.getElementById("transcription");
+  const analyzeButton = document.getElementById("analyze-button");
+  const input = document.getElementById("input");
+  const output = document.getElementById("output");
+  const generateButton = document.getElementById("generate-button");
+
+  startButton.addEventListener("click", () => {
+    recognition.start();
+    startButton.disabled = true;
+    stopButton.disabled = false;
+  });
+
+  stopButton.addEventListener("click", () => {
+    recognition.stop();
+    startButton.disabled = false;
+    stopButton.disabled = true;
+  });
+
+  recognition.addEventListener("result", event => {
+    const transcript = Array.from(event.results)
+            .map(result => result[0].transcript)
+            .join("");
+    //transcription.textContent = transcript;
+    input.value = transcription.textContent;
+  });
+
+  recognition.addEventListener("end", () => {
+    startButton.disabled = false;
+    stopButton.disabled = true;
+  });
+
+  function analyze() {
+    const rawText = input.value.toLowerCase(); // get input text
+    console(rawText)
+    const cleanText = rawText.replace(/[^a-z\s]/g, ''); // remove non-alphabetic characters
+    const words = cleanText.match(/\b\S+\b/g); // extract words from input
+    const frequencyMap = new Map(); // create new Map object
+    words.forEach(word => {
+      const count = frequencyMap.get(word) || 0; // get current count for word or default to 0
+      frequencyMap.set(word, count + 1); // increment count for word
+    });
+    const sortedWords = Array.from(frequencyMap.entries()) // convert Map to Array of [key, value] pairs
+            .sort((a, b) => b[1] - a[1]); // sort by descending value
+    output.innerHTML = ""; // clear previous output
+    sortedWords.forEach(pair => {
+      const word = pair[0];
+      const count = pair[1];
+      const div = document.createElement("div");
+      div.textContent = `${word}: ${count}`;
+      div.addEventListener("click", () => {
+        if (div.classList.contains("selected")) {
+          div.classList.remove("selected");
+        } else {
+          div.classList.add("selected");
+        }
+      });
+      output.appendChild(div);
+    });
+  }
+
+  analyzeButton.addEventListener("click", analyze);
+
+  function generateVideo(selectedWords) {
+    const API_KEY = "091343ce13c8ae780065ecb3b13dc903475dd22cb78a05503c2e0c69c5e98044";
+    const IMAGES_PER_WORD = 3;
+    const images = [];
+
+    // Search for images related to the selected words using Unsplash API
+    for (const word of selectedWords) {
+      const url = `https://api.unsplash.com/search/photos?query=${word}&per_page=${IMAGES_PER_WORD}&client_id=${API_KEY}`;
+      fetch(url)
+              .then(response => response.json())
+              .then(data => {
+                const results = data.results.map(result => result.urls.regular);
+                images.push(...results);
+                // Check if all images have been fetched
+                if (images.length === selectedWords.length * IMAGES_PER_WORD) {
+                  // Create slideshow using Flickity library
+                  const slideshow = new Flickity("#slideshow", {
+                    cellAlign: "left",
+                    contain: true
+                  });
+                  for (const image of images) {
+                    const slide = document.createElement("img");
+                    slide.src = image;
+                    slideshow.append(slide);
+                  }
+                }
+              })
+              .catch(error => {
+                console.error(error);
+              });
+    }
+  }
+
+  generateButton.addEventListener("click", generateVideo);
+</script>
+<style>
+  .selected {
+    background-color: yellow;
+  }
+</style>
+</body>
+</html>
