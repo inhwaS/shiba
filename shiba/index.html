@@ -14,131 +14,151 @@
     </div>
     <div id="messages"></div>
     <div id="buttons">
-            <label class="choose-file-btn" id="choose-input1">Choose File to Upload</label>
-            <label class="choose-file-btn" id="choose-input2">Start Recording</label>
+        <label class="choose-file-btn" id="choose-input1">Choose File to Upload</label>
+        <label class="choose-file-btn" id="choose-input2">Start Recording</label>
     </div>
-        <form id="file-form">
-            <div class="hidden">
-                <!--        FILE UPLOAD SECTION     -->
-                <label for="file-input" class="choose-file-btn">Choose File</label>
-                <input type="file" id="file-input" name="file">
-                <input type="text" id="file-name" disabled></input>
-                <button type="submit" id="send-button">Upload</button>
-
-                <!--        VOICE RECORDING SECTION     -->
-                <button class="choose-file-btn" id="start-button">Start Transcription</button>
-                <button class="choose-file-btn" id="stop-button" disabled>Stop Transcription</button>
-                <div id="transcription"></div>
-                <textarea id="input" rows="10" cols="50"></textarea>
-                <button id="analyze-button">Analyze</button>
-                <div id="output"></div>
-                <button type="submit" id="generate-button">Generate Video</button>
-
-                <!--        HIDDEN SECTION     -->
-                <input type="hidden" id="selected-words" value="">
+    <form id="file-form">
+        <div id="file-upload-section" style="display:none;">
+            <!-- FILE UPLOAD SECTION -->
+            <label for="file-input" class="choose-file-btn">Choose File</label>
+            <input type="file" id="file-input" name="file">
+            <input type="text" id="file-name" disabled></input>
+            <button type="submit" id="send-button">Upload</button>
+        </div>
+        <div id="voice-recording-section" style="display:none;">
+            <!-- VOICE RECORDING SECTION -->
+            <button class="choose-file-btn" id="start-button">Start Transcription</button>
+            <button class="choose-file-btn" id="stop-button" disabled>Stop Transcription</button>
+            <div id="transcription"></div>
+            <textarea id="input" rows="10" cols="50"></textarea>
+            <div>
+                <button class="choose-file-btn" id="analyze-button">Analyze</button>
+                <button class="choose-file-btn" type="submit" id="generate-button">Generate Video</button>
             </div>
-        </form>
-        <script>
-            let selectedWords = "";
-            const recognition = new window.webkitSpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true;
 
-            const startButton = document.getElementById("start-button");
-            const stopButton = document.getElementById("stop-button");
-            const transcription = document.getElementById("transcription");
-            const analyzeButton = document.getElementById("analyze-button");
-            const input = document.getElementById("input");
-            const output = document.getElementById("output");
-            const generateButton = document.getElementById("generate-button");
-            const selectedDivs = []; // create an empty array to hold selected divs
+            <div id= "output"></div>
 
+        </div>
+        <input type="hidden" id="selected-words" value="">
+    </form>
+    <script>
+        let selectedWords = "";
+        const recognition = new window.webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
 
-            startButton.addEventListener("click", () => {
-                recognition.start();
-                startButton.disabled = true;
-                stopButton.disabled = false;
+        const startButton = document.getElementById("start-button");
+        const stopButton = document.getElementById("stop-button");
+        const transcription = document.getElementById("transcription");
+        const analyzeButton = document.getElementById("analyze-button");
+        const input = document.getElementById("input");
+        const output = document.getElementById("output");
+        const generateButton = document.getElementById("generate-button");
+        const selectedDivs = []; // create an empty array to hold selected divs
+
+        const chooseInput1 = document.getElementById("choose-input1");
+        const chooseInput2 = document.getElementById("choose-input2");
+        const fileUploadSection = document.getElementById("file-upload-section");
+        const voiceRecordingSection = document.getElementById("voice-recording-section");
+
+        chooseInput1.addEventListener("click", () => {
+            fileUploadSection.style.display = "block";
+            voiceRecordingSection.style.display = "none";
+            chooseInput1.style.display = "none";
+            chooseInput2.style.display = "none";
+        });
+
+        chooseInput2.addEventListener("click", () => {
+            fileUploadSection.style.display = "none";
+            voiceRecordingSection.style.display = "block";
+            chooseInput1.style.display = "none";
+            chooseInput2.style.display = "none";
+        });
+        startButton.addEventListener("click", () => {
+            recognition.start();
+            startButton.disabled = true;
+            stopButton.disabled = false;
+        });
+
+        stopButton.addEventListener("click", () => {
+            recognition.stop();
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        });
+
+        recognition.addEventListener("result", event => {
+            const transcript = Array.from(event.results)
+                .map(result => result[0].transcript)
+                .join("");
+            document.getElementById("input").textContent = transcript;
+        });
+
+        recognition.addEventListener("end", () => {
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        });
+
+        function analyze(event) {
+            event.preventDefault();
+            const rawText = input.value.toLowerCase();
+            const cleanText = rawText.replace(/[^a-z\s]/g, '');
+            const words = cleanText.match(/\b\S+\b/g);
+            const frequencyMap = new Map();
+            words.forEach(word => {
+                const count = frequencyMap.get(word) || 0;
+                frequencyMap.set(word, count + 1);
             });
+            const sortedWords = Array.from(frequencyMap.entries())
+                .sort((a, b) => b[1] - a[1]);
+            output.innerHTML = "";
 
-            stopButton.addEventListener("click", () => {
-                recognition.stop();
-                startButton.disabled = false;
-                stopButton.disabled = true;
-            });
-
-            recognition.addEventListener("result", event => {
-                const transcript = Array.from(event.results)
-                    .map(result => result[0].transcript)
-                    .join("");
-                document.getElementById("input").textContent = transcript;
-            });
-
-            recognition.addEventListener("end", () => {
-                startButton.disabled = false;
-                stopButton.disabled = true;
-            });
-
-            function analyze(event) {
-                event.preventDefault();
-                const rawText = input.value.toLowerCase();
-                const cleanText = rawText.replace(/[^a-z\s]/g, '');
-                const words = cleanText.match(/\b\S+\b/g);
-                const frequencyMap = new Map();
-                words.forEach(word => {
-                    const count = frequencyMap.get(word) || 0;
-                    frequencyMap.set(word, count + 1);
-                });
-                const sortedWords = Array.from(frequencyMap.entries())
-                    .sort((a, b) => b[1] - a[1]);
-                output.innerHTML = "";
-
-                sortedWords.forEach(pair => {
-                    const word = pair[0];
-                    const count = pair[1];
-                    const div = document.createElement("div");
-                    div.textContent = `${word}: ${count}`;
-                    div.addEventListener("click", () => {
-                        if (div.classList.contains("selected")) {
-                            div.classList.remove("selected");
-                            // remove the div from the selected divs array
-                            const index = selectedDivs.indexOf(div);
-                            if (index > -1) {
-                                selectedDivs.splice(index, 1);
-                            }
-                        } else {
-                            div.classList.add("selected");
-                            // add the div to the selected divs array
-                            selectedDivs.push(div);
+            sortedWords.forEach(pair => {
+                const word = pair[0];
+                const count = pair[1];
+                const div = document.createElement("div");
+                div.textContent = `${word}: ${count}`;
+                div.addEventListener("click", () => {
+                    if (div.classList.contains("selected")) {
+                        div.classList.remove("selected");
+                        // remove the div from the selected divs array
+                        const index = selectedDivs.indexOf(div);
+                        if (index > -1) {
+                            selectedDivs.splice(index, 1);
                         }
-                    });
-                    output.appendChild(div);
+                    } else {
+                        div.classList.add("selected");
+                        // add the div to the selected divs array
+                        selectedDivs.push(div);
+                    }
                 });
+                output.appendChild(div);
+            });
 
+        }
+
+        analyzeButton.addEventListener("click", analyze);
+
+        function generateVideo(selectedWords) {
+            let passToJquery = "";
+            for (let i = 0; i < selectedDivs.length; i++) {
+                passToJquery += selectedDivs[i].textContent;
+                passToJquery += " ";
             }
-
-            analyzeButton.addEventListener("click", analyze);
-
-            function generateVideo(selectedWords) {
-                let passToJquery = "";
-                for (let i = 0; i < selectedDivs.length; i++) {
-                    passToJquery += selectedDivs[i].textContent;
-                    passToJquery += " ";
-                }
-                const result = passToJquery.replace(/:\s*\d+/g, '');
-                console.log(result); // "www ww"
-                document.getElementById("selected-words").value = result;
-                selectedWords = result;
-            }
+            const result = passToJquery.replace(/:\s*\d+/g, '');
+            console.log(result); // "www ww"
+            document.getElementById("selected-words").value = result;
+            selectedWords = result;
+        }
 
 
-            generateButton.addEventListener("click", generateVideo);
+        generateButton.addEventListener("click", generateVideo);
 
-        </script>
-        <style>
-            .selected {
-                background-color: yellow;
-            }
-        </style>
+    </script>
+    <style>
+        .selected {
+            background-color: yellow;
+        }
+    </style>
 </div>
 </body>
 </html>
