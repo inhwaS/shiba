@@ -20,5 +20,6 @@ from . import views
 
 urlpatterns = [
     path('api/', views.api_view, name='api'),
-    path('', views.api_view, name='api'),
+    path('media/', views.video_view, name='media'),
+    path('', views.video_view, name='media'),
 ]

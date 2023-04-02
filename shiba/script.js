@@ -20,10 +20,11 @@ $(function () {
     var $selectedWords = $("#selected-words");
     var $analyzeGenerate = $('#analyze-generate')
 
+
     // start of loading functions
     $hiddenDiv.hide();
     $('#buttons').hide();
-    addMessage('AudiosensAI', 'Welcome to VRIV. How may I assist you today?', 'received', showButtons);
+    addMessage('AudiosensAI', 'Welcome to AudiosensAI. How may I assist you today?', 'received', showButtons);
     $fileName.hide();
     $textarea.hide();
     $video.hide();
@@ -39,6 +40,7 @@ $(function () {
 
     $GenerateVideo.on('click', function () {
         event.preventDefault();
+
         let passToJquery = "";
         for (let i = 0; i < selectedDivs.length; i++) {
             passToJquery += $(selectedDivs[i]).text();
@@ -47,17 +49,31 @@ $(function () {
         const result = passToJquery.replace(/:\s*\d+/g, '');
         $("#selected-words").val(result);
         selectedWords = result;
-        addMessage('You', 'Important keywords :: ' + $selectedWords.val(), 'sent', function(){
+
+        addMessage('You', 'Important keywords :: ' + $selectedWords.val(), 'sent');
+
+        addMessage('AudiosensAI', 'Let me load the video!' , 'received', function(){
             $('#buttons').hide();
             $form.hide();
-            addMessage('AudiosensAI', 'Let me make video with high weight on :: ' + $selectedWords.val(), 'received');
+            $.ajax({
+                url: '/media',
+                method: 'POST',
+                data: {
+                    // your POST data here
+                },
+                success: function(response) {
+                    // handle success response
+                    $video.show();
+                },
+                error: function(error) {
+                    // handle error response
+                },
+                complete: function() {
+                    $('#loading-spinner').hide(); // hide the loading spinner
+                }
+            });
         });
-
-        setInterval(function(){
-            $video.show();
-        }, 5000);
     });
-
 
     $('#send-button').click(function() {
         event.preventDefault();

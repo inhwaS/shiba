@@ -34,8 +34,8 @@
         </div>
         <div id="transcription"></div>
 
-        <div id = 'analyze-generate' >
-            <textarea id="input" rows="10" cols="50"></textarea>
+        <div id ='analyze-generate'>
+            <textarea id="input" rows="6" cols="30"></textarea>
             <button class="choose-file-btn" id="analyze-button">Analyze</button>
             <button class="choose-file-btn" id = 'generate-button'>Generate Video</button>
         </div>
@@ -56,7 +56,7 @@
         const recognition = new window.webkitSpeechRecognition();
         recognition.continuous = true;
         recognition.interimResults = true;
-        const  analyzeGenerate = document.getElementById("analyze-generate");
+        const analyzeGenerate = document.getElementById("analyze-generate");
         const startButton = document.getElementById("start-button");
         const stopButton = document.getElementById("stop-button");
         const transcription = document.getElementById("transcription");
@@ -81,10 +81,13 @@
         chooseInput2.addEventListener("click", () => {
             fileUploadSection.style.display = "none";
             voiceRecordingSection.style.display = "block";
-            //analyzeGenerate.style.display = "block";
-            //chooseInput1.style.display = "none";
-            //chooseInput2.style.display = "none";
+            chooseInput1.style.display = "none";
+            chooseInput2.style.display = "none";
+            input.style.display = "block";
+            analyzeGenerate.style.display = "block";
+
         });
+
         startButton.addEventListener("click", () => {
             recognition.start();
             startButton.disabled = true;
@@ -95,6 +98,7 @@
             recognition.stop();
             startButton.disabled = false;
             stopButton.disabled = true;
+            analyze();
         });
 
         recognition.addEventListener("result", event => {
@@ -127,6 +131,7 @@
                 const word = pair[0];
                 const count = pair[1];
                 const div = document.createElement("div");
+                div.class = 'appended';
                 div.textContent = `${word}: ${count}`;
                 div.addEventListener("click", () => {
                     if (div.classList.contains("selected")) {

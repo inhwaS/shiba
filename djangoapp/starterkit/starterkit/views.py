@@ -4,11 +4,18 @@ from django.http import HttpResponse
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import time
 
 def api_view(request):
+    print("======================== api_view ===============================")
     json_content = voiceTotext('5gvnf-qo2uz.wav')
     return HttpResponse(json_content)
 
+def video_view(request):
+    print("======================== video_view ===============================")
+    time.sleep(3)
+    print("video view::: show video")
+    return HttpResponse("success")
 
 import speech_recognition as sr
 from os import path
@@ -54,7 +61,6 @@ def voiceTotext(file_name):
     #             everyday life it became apparent that a faster'}
 
     json_content = json.dumps(real_content)
-    print(json_content)
 
     return json_content
 
