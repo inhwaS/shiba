@@ -1,0 +1,15 @@
+[Sunday]
+- refine weird words
+- pre-presentation
+    - security
+
+[Demo Scenario]
+- docker-compose up -d
+- 127.0.0.1
+- docker logs -f djangoapp
+- Show voice recording first
+- Upload the file
+- Select keywords
+- Load video
+
+==> start over to dictate Nitzan’s words
