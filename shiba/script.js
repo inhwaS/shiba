@@ -5,10 +5,11 @@ $(function () {
     var $messages = $('.messages');
     var $GenerateVideo = $('#generate-button');
     var $hiddenDiv = $('.hidden');
+    var $video = $('#video');
 
     var $upload = $('choose-input1');
     var $record = $('choose-input2');
-    ;
+
     // Get references to the file input element and form
     var $fileInput = $('#file-input');
     var $form = $('#file-form');
@@ -25,6 +26,7 @@ $(function () {
     addMessage('Shiba', 'Welcome to VRIV. How may I assist you today?', 'received', showButtons);
     $fileName.hide();
     $textarea.hide();
+    $video.hide();
     $analyzeGenerate.hide();
 
 
@@ -37,14 +39,21 @@ $(function () {
 
     $GenerateVideo.on('click', function () {
         event.preventDefault();
-        // Get the user's message from the input element
-//        console.log("my result pass in is " + $selectedWords.val());
-        // Add the user's message to the chat window
-//        addMessage('You', $selectedWords.val(), 'sent', function () {
-//            $('#buttons').hide();
-//            $form.hide();
-//            addMessage('Shiba', 'Generate Video on ' + $selectedWords.val(), 'received');
-//        });
+        let passToJquery = "";
+        for (let i = 0; i < selectedDivs.length; i++) {
+            passToJquery += $(selectedDivs[i]).text();
+            passToJquery += " ";
+        }
+        const result = passToJquery.replace(/:\s*\d+/g, '');
+        $("#selected-words").val(result);
+        selectedWords = result;
+        addMessage('You', 'Important keywords :: ' + $selectedWords.val(), 'sent', function(){
+            $('#buttons').hide();
+            $form.hide();
+            addMessage('Shiba', 'Let me make video with high weight on :: ' + $selectedWords.val(), 'received');
+        });
+
+        $video.show();
     });
 
 
@@ -54,10 +63,12 @@ $(function () {
         // Add the user's message to the chat window
         addMessage('You', file.name, 'sent', function(){
             $('#file-upload-section').hide();
-            addMessage('Shiba', 'Successfully uploaded! Please wait to be parsed', 'received');
+            addMessage('Shiba', 'Successfully uploaded! Please wait to be parsed', 'received', function(){
+                $('#loading-spinner').show(); // show the loading spinner
+            });
         });
 
-        console.log("video button sending!!");
+
         $.ajax({
             url: '/api',
             method: 'POST',
@@ -70,15 +81,16 @@ $(function () {
             },
             error: function(error) {
                 // handle error response
+            },
+            complete: function() {
+                $('#loading-spinner').hide(); // hide the loading spinner
             }
         });
     });
 
     function successCallback(response){
-        console.log("successfully called function!");
-//        console.log(response);
         var parsedResponse = $.parseJSON(response);
-        console.log(parsedResponse.content);
+
         addMessage('Shiba', "Successfully parsed! Please select important keywords", 'received');
         $textarea.val(parsedResponse.content);
 
@@ -127,7 +139,6 @@ $(function () {
     // Function for adding a message to the chat window
     function addMessage(sender, content, type, callback) {
         // Create a new message element
-        console.log(content);
         var $message = $('<div>').addClass('message');
         var $sender = $('<div>').addClass('sender').text(sender + ':');
         var $content = $('<div>').addClass('content').addClass(type);

@@ -42,6 +42,12 @@
 
         <div id= "output"></div>
         <input type="hidden" id="selected-words" value="">
+        <div id="loading-spinner">
+            <div class="spinner"></div>
+        </div>
+        <video controls id="video">
+          <source src="VIDEO_DEMO.mp4" type="video/mp4">
+        </video>
     </form>
     <script>
         let selectedWords = "";
@@ -140,60 +146,6 @@
         }
 
         analyzeButton.addEventListener("click", analyze);
-
-        function generateVideo(selectedWords) {
-            let passToJquery = "";
-            for (let i = 0; i < selectedDivs.length; i++) {
-                passToJquery += selectedDivs[i].textContent;
-                passToJquery += " ";
-            }
-            const result = passToJquery.replace(/:\s*\d+/g, '');
-            console.log(result); // "www ww"
-            document.getElementById("selected-words").value = result;
-            selectedWords = result;
-        }
-
-
-        generateButton.addEventListener("click", generateVideo);
-<!--        function updateText(event) {-->
-<!--            event.preventDefault();-->
-
-<!--            const rawText = input.value.toLowerCase();-->
-<!--            const cleanText = rawText.replace(/[^a-z\s]/g, '');-->
-<!--            const words = cleanText.match(/\b\S+\b/g);-->
-<!--            const frequencyMap = new Map();-->
-<!--            words.forEach(word => {-->
-<!--                const count = frequencyMap.get(word) || 0;-->
-<!--                frequencyMap.set(word, count + 1);-->
-<!--            });-->
-<!--            const sortedWords = Array.from(frequencyMap.entries())-->
-<!--                .sort((a, b) => b[1] - a[1]);-->
-<!--            output.innerHTML = "";-->
-
-<!--            sortedWords.forEach(pair => {-->
-<!--                const word = pair[0];-->
-<!--                const count = pair[1];-->
-<!--                const div = document.createElement("div");-->
-<!--                div.textContent = `${word}: ${count}`;-->
-<!--                div.addEventListener("click", () => {-->
-<!--                    if (div.classList.contains("selected")) {-->
-<!--                        div.classList.remove("selected");-->
-<!--                        // remove the div from the selected divs array-->
-<!--                        const index = selectedDivs.indexOf(div);-->
-<!--                        if (index > -1) {-->
-<!--                            selectedDivs.splice(index, 1);-->
-<!--                        }-->
-<!--                    } else {-->
-<!--                        div.classList.add("selected");-->
-<!--                        // add the div to the selected divs array-->
-<!--                        selectedDivs.push(div);-->
-<!--                    }-->
-<!--                });-->
-<!--                output.appendChild(div);-->
-<!--            });-->
-
-<!--        }-->
-<!--        sendButton.addEventListener("change", updateText);-->
 
     </script>
     <style>
