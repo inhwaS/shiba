@@ -17,16 +17,25 @@ services:
     container_name: nginx
     ports:
       - 80:80
+      - 443:443  # <-- expose HTTPS port
     volumes:
       - ./nginx:/etc/nginx/conf.d
       - ./logs/nginx:/var/log/nginx
       - ./shiba:/usr/share/nginx/html
-      #- ./shiba:/var/static  # <-- bind the static files again so Nginx can share volume
       - ./media_volume:/var/media  # <-- bind the media files again so Nginx can share volume
-    depends_on:  # <-- wait for djangoapp to be "ready" before starting this service
+      - ./ssl:/etc/nginx/ssl  # <-- bind SSL certificate and key
+    depends_on: # <-- wait for djangoapp to be "ready" before starting this service
       - djangoapp
+    environment: # <-- add these environment variables
+      - COUNTRY=US
+      - STATE=California
+      - CITY=San Francisco
+      - ORGANIZATION=usfca
+      - ORGANIZATIONAL_UNIT=CS
+      - COMMON_NAME=admin
+      - EMAIL=ison2@dons.usfca.edu
     networks:
-      - nginx_network  
+      - nginx_network
 
   database1:  # <-- IMPORTANT: same name as in Djano settings.py, otherwise Django won't find the database!
     image: postgres:11

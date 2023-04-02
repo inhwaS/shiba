@@ -142,3 +142,14 @@ STATICFILES_FINDERS = [
 # Media files
 MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'media')
 MEDIA_URL = '/media/'
+
+
+# Set SECURE_SSL_REDIRECT to True to redirect all non-HTTPS requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# Set SECURE_PROXY_SSL_HEADER to indicate that the connection is secure
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# settings.py
+
+# Set SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE to True for secure cookies
+SESSION_COOKIE_SECURE = True
