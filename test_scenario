@@ -1,7 +1,8 @@
 [Sunday]
 - refine weird words
 - pre-presentation
-    - security
+    - SSL : https://www.youtube.com/watch?v=X3Pr5VATOyA
+        80 --> 443 : https !
 
 [Demo Scenario]
 - docker-compose up -d
