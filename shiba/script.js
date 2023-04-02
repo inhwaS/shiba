@@ -14,14 +14,18 @@ $(function () {
     var $form = $('#file-form');
     var $messages = $('#messages');
     var $fileName = $("#file-name");
+    var $textarea = $("#input");
     const $selects = $('select');
     var $selectedWords = $("#selected-words");
+    var $analyzeGenerate = $('#analyze-generate')
 
     // start of loading functions
     $hiddenDiv.hide();
     $('#buttons').hide();
     addMessage('Shiba', 'Welcome to VRIV. How may I assist you today?', 'received', showButtons);
     $fileName.hide();
+    $textarea.hide();
+    $analyzeGenerate.hide();
 
 
     // Show file name and upload button when a file is selected
@@ -31,40 +35,28 @@ $(function () {
         $fileName.val(fileName);
     })
 
-    //Add a click event listener to the button
-    // $button.on('click', function () {
-    //     event.preventDefault();
-    //     // Get the user's message from the input element
-    //     var file = $fileInput[0].files[0];
-    //     // Add the user's message to the chat window
-    //     addMessage('You', file.name, 'sent', function () {
-    //         $form.hide();
-    //         addMessage('Shiba', 'the knife was the most commonly used tool to sharpen the wooden writing instrument known as the pencil which historians believe was invented in the 15th or 16th century but whittling the Woodway to eventually produce a point was a time-consuming tedious and inexact process as pencils became more ubiquitous in everyday life it became apparent that a faster', 'received');
-    //         // const analyzeButton = document.createElement("button");
-    //         // analyzeButton.textContent = "Analyze";
-    //         //
-    //         // // append the button to the document body
-    //         // document.body.appendChild(analyzeButton);
-    //         // document.getElementById("input").value = 'the knife was the most commonly used tool to sharpen the wooden writing instrument known as the pencil which historians believe was invented in the 15th or 16th century but whittling the Woodway to eventually produce a point was a time-consuming tedious and inexact process as pencils became more ubiquitous in everyday life it became apparent that a faster';
-    //         // // add a click event listener to the button
-    //         // analyzeButton.addEventListener("click", analyze);
-    //     });
-    // });
-
     $GenerateVideo.on('click', function () {
         event.preventDefault();
-        console.log("hihihi")
         // Get the user's message from the input element
-        console.log("my result pass in is " + $selectedWords.val());
+//        console.log("my result pass in is " + $selectedWords.val());
         // Add the user's message to the chat window
-        addMessage('You', $selectedWords.val(), 'sent', function () {
-            $form.hide();
-            addMessage('Shiba', 'Generate Video on ' + $selectedWords.val(), 'received');
-        });
+//        addMessage('You', $selectedWords.val(), 'sent', function () {
+//            $('#buttons').hide();
+//            $form.hide();
+//            addMessage('Shiba', 'Generate Video on ' + $selectedWords.val(), 'received');
+//        });
     });
 
-    $('#video-button').click(function() {
+
+    $('#send-button').click(function() {
         event.preventDefault();
+        var file = $fileInput[0].files[0];
+        // Add the user's message to the chat window
+        addMessage('You', file.name, 'sent', function(){
+            $('#file-upload-section').hide();
+            addMessage('Shiba', 'Successfully uploaded! Please wait to be parsed', 'received');
+        });
+
         console.log("video button sending!!");
         $.ajax({
             url: '/api',
@@ -87,43 +79,44 @@ $(function () {
 //        console.log(response);
         var parsedResponse = $.parseJSON(response);
         console.log(parsedResponse.content);
-        addMessage('Shiba', parsedResponse.content, 'received');
-    }
+        addMessage('Shiba', "Successfully parsed! Please select important keywords", 'received');
+        $textarea.val(parsedResponse.content);
 
-    $upload.on('click', function () {
-        const fileInput = document.getElementById("file-input");
-        const selectedFile = fileInput.files[0];
+        $textarea.show();
+        $analyzeGenerate.show();
+        const rawText = $textarea.val().toLowerCase();
+        const cleanText = rawText.replace(/[^a-z\s]/g, '');
+        const words = cleanText.match(/\b\S+\b/g);
+        const frequencyMap = new Map();
+        words.forEach(word => {
+            const count = frequencyMap.get(word) || 0;
+            frequencyMap.set(word, count + 1);
+        });
+        const sortedWords = Array.from(frequencyMap.entries())
+            .sort((a, b) => b[1] - a[1]);
+        $('#output').html("");
 
-        if (selectedFile) {
-            const filePath = "path/to/intellij/" + selectedFile.name;
-            console.log("File path:", filePath);
-
-            // create a new XMLHttpRequest object
-            const xhr = new XMLHttpRequest();
-
-            // set up a POST request to the server
-            xhr.open("POST", "/upload", true);
-
-            // create a new FormData object to store the selected file
-            const formData = new FormData();
-            formData.append("file", selectedFile, selectedFile.name);
-
-            // send the form data to the server
-            xhr.send(formData);
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        console.log("File uploaded successfully");
-                    } else {
-                        console.log("Error uploading file");
+        sortedWords.forEach(pair => {
+            const word = pair[0];
+            const count = pair[1];
+            const div = $("<div>").text(`${word}: ${count}`);
+            div.on("click", () => {
+                if (div.hasClass("selected")) {
+                    div.removeClass("selected");
+                    // remove the div from the selected divs array
+                    const index = selectedDivs.indexOf(div);
+                    if (index > -1) {
+                        selectedDivs.splice(index, 1);
                     }
+                } else {
+                    div.addClass("selected");
+                    // add the div to the selected divs array
+                    selectedDivs.push(div);
                 }
-            };
-        } else {
-            console.log("No file selected");
-        }
-    })
+            });
+            $('#output').append(div);
+        });
+    }
 
     function showButtons() {
         setTimeout(function () {

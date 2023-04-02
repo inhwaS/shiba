@@ -20,8 +20,8 @@ services:
     volumes:
       - ./nginx:/etc/nginx/conf.d
       - ./logs/nginx:/var/log/nginx
-      - ./static_volume:/usr/share/nginx/html
-      #- ./static_volume:/var/static  # <-- bind the static files again so Nginx can share volume
+      - ./shiba:/usr/share/nginx/html
+      #- ./shiba:/var/static  # <-- bind the static files again so Nginx can share volume
       - ./media_volume:/var/media  # <-- bind the media files again so Nginx can share volume
     depends_on:  # <-- wait for djangoapp to be "ready" before starting this service
       - djangoapp
