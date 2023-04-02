@@ -1,15 +1,13 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.http import HttpResponse
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 
 def api_view(request):
-    # subprocess.run(['python', 'djangoapp/starterkit/starterkit/demo.py'])
     json_content = voiceTotext('5gvnf-qo2uz.wav')
-    if request.method == 'POST':
-        # handle POST request here
-        return HttpResponse(json_content)
-    else:
-        return HttpResponse(json_content)
+    return HttpResponse(json_content)
 
 
 import speech_recognition as sr
@@ -39,8 +37,13 @@ def voiceTotext(file_name):
         print("Google Speech Recognition error; {0}".format(e))
 
 
+    # Filter out stop words
+    stop_words = set(stopwords.words('english'))
+    filtered_content = [word for word in content.split() if word.lower() not in stop_words]
+
     real_content = {}
-    real_content['content'] = content
+    real_content['content'] = ' '.join(filtered_content)  # Convert the list back to string
+
     # print(real_content['content'])
     # {'content':'the knife was the most commonly used tool
     #             to sharpen the wooden writing instrument known

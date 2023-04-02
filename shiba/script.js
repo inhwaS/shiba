@@ -23,7 +23,7 @@ $(function () {
     // start of loading functions
     $hiddenDiv.hide();
     $('#buttons').hide();
-    addMessage('Shiba', 'Welcome to VRIV. How may I assist you today?', 'received', showButtons);
+    addMessage('AudiosensAI', 'Welcome to VRIV. How may I assist you today?', 'received', showButtons);
     $fileName.hide();
     $textarea.hide();
     $video.hide();
@@ -50,12 +50,12 @@ $(function () {
         addMessage('You', 'Important keywords :: ' + $selectedWords.val(), 'sent', function(){
             $('#buttons').hide();
             $form.hide();
-            addMessage('Shiba', 'Let me make video with high weight on :: ' + $selectedWords.val(), 'received');
+            addMessage('AudiosensAI', 'Let me make video with high weight on :: ' + $selectedWords.val(), 'received');
         });
 
         setInterval(function(){
             $video.show();
-        }, 3000);
+        }, 5000);
     });
 
 
@@ -65,7 +65,7 @@ $(function () {
         // Add the user's message to the chat window
         addMessage('You', file.name, 'sent', function(){
             $('#file-upload-section').hide();
-            addMessage('Shiba', 'Successfully uploaded! Please wait to be parsed', 'received', function(){
+            addMessage('AudiosensAI', 'Successfully uploaded! Please wait to be parsed', 'received', function(){
                 $('#loading-spinner').show(); // show the loading spinner
             });
         });
@@ -93,7 +93,7 @@ $(function () {
     function successCallback(response){
         var parsedResponse = $.parseJSON(response);
 
-        addMessage('Shiba', "Successfully parsed! Please select important keywords", 'received');
+        addMessage('AudiosensAI', "Successfully parsed! Please select important keywords", 'received');
         $textarea.val(parsedResponse.content);
 
         $textarea.show();
@@ -145,7 +145,7 @@ $(function () {
         var $sender = $('<div>').addClass('sender').text(sender + ':');
         var $content = $('<div>').addClass('content').addClass(type);
 
-        if (sender == 'Shiba') {
+        if (sender == 'AudiosensAI') {
             // Add the message content one character at a time
             var index = 0;
             var messageInterval = setInterval(function () {

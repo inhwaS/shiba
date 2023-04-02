@@ -43,3 +43,4 @@
 2023/04/02 05:07:21 [error] 7#7: *35 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.27.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "127.0.0.1", referrer: "http://127.0.0.1/"
 2023/04/02 05:09:26 [error] 7#7: *38 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.27.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "127.0.0.1", referrer: "http://127.0.0.1/"
 2023/04/02 05:10:19 [error] 7#7: *39 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.27.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "127.0.0.1", referrer: "http://127.0.0.1/"
+2023/04/02 06:48:51 [emerg] 1#1: host not found in upstream "djangoapp:8000" in /etc/nginx/conf.d/djangoapp.conf:5

@@ -11,6 +11,8 @@ WORKDIR /var/djangoapp
 # install our dependencies
 COPY djangoapp/requirements.txt /var/djangoapp
 RUN pip install -r requirements.txt
+RUN python -c "import nltk; nltk.download('stopwords')"
+RUN python -c "import nltk; nltk.download('punkt')"
 
 # copy our project code
 COPY djangoapp/starterkit /var/djangoapp/starterkit
