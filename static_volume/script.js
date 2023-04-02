@@ -38,7 +38,7 @@ $(function() {
 		event.preventDefault();
 		console.log("video button sending!!");
 		$.ajax({
-		    url: '/api/',
+		    url: '/api',
 		    method: 'POST',
 		    data: {
 		        // your POST data here

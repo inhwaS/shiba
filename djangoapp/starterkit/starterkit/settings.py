@@ -26,9 +26,11 @@ SECRET_KEY = '_2*^^tq)sbdmvx%bi46&*rhj5gas#^a8td%vo=x5qw1+=!x1$y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1','nginx']
 
-
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_NAME = 'mycsrftoken'
+CSRF_HEADER_NAME = 'X-MY-CSRFToken'
 # Application definition
 
 INSTALLED_APPS = [
