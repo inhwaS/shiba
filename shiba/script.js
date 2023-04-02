@@ -53,7 +53,9 @@ $(function () {
             addMessage('Shiba', 'Let me make video with high weight on :: ' + $selectedWords.val(), 'received');
         });
 
-        $video.show();
+        setInterval(function(){
+            $video.show();
+        }, 3000);
     });
 
 
