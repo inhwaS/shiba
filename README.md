@@ -17,4 +17,14 @@ shiba/
 ├─ .gitignore
 ├─ docker-compose.yml
 ├─ README.md
+```
+
+## Requirements:
+- Docker
+
+## How to Run:
+After cloning the repository, use `docker-compose` to run the application:
+```bash
+docker-compose up -d --build
+```
 
